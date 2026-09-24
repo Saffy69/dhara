@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MapLibre GL canvas must fill its container */
+.maplibregl-canvas {
+  outline: none;
+}
+
+/* Global dark background */
+body {
+  @apply bg-dhara-bg text-dhara-white;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Glass panel utility class */
+.glass-panel {
+  @apply bg-dhara-glass border border-dhara-border backdrop-blur-sm rounded-xl shadow-glass;
+}
+
+/* Confidence tier badge utilities */
+.badge-high {
+  @apply bg-red-500/20 text-red-400 border border-red-500/40;
+}
+.badge-moderate {
+  @apply bg-orange-500/20 text-orange-400 border border-orange-500/40;
+}
+.badge-low {
+  @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/40;
+}
+
+/* Scrollbar styling for panels */
+.dhara-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #1f2d47 transparent;
+}
+.dhara-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.dhara-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dhara-scroll::-webkit-scrollbar-thumb {
+  background-color: #1f2d47;
+  border-radius: 2px;
+}

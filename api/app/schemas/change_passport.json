@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ChangePassport",
+  "description": "DHARA Change Passport — authoritative JSON Schema. Must stay in sync with docs/tasks/00_Change_Passport_Schema.md and frontend/src/types/changePassport.ts",
+  "type": "object",
+  "required": [
+    "event_id", "hazard_type", "aoi_name", "centroid", "area_km2",
+    "first_detected", "last_confirmed", "observation_count",
+    "displacement", "confidence", "alternative_explanations_checked",
+    "supporting_evidence", "validation", "data_provenance",
+    "recommended_next_step", "not_an_emergency_alert_disclaimer"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": { "type": "string", "minLength": 1 },
+    "hazard_type": {
+      "type": "string",
+      "enum": ["slow_slope_deformation", "glacier_motion", "flood_extent_change", "land_subsidence"]
+    },
+    "aoi_name": { "type": "string", "minLength": 1 },
+    "centroid": {
+      "type": "object",
+      "required": ["lat", "lon"],
+      "additionalProperties": false,
+      "properties": {
+        "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+        "lon": { "type": "number", "minimum": -180, "maximum": 180 }
+      }
+    },
+    "area_km2": { "type": "number", "minimum": 0 },
+    "first_detected": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "last_confirmed": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "observation_count": { "type": "integer", "minimum": 1 },
+    "displacement": {
+      "type": "object",
+      "required": ["mean_velocity_mm_per_year", "trend", "line_of_sight_only"],
+      "additionalProperties": false,
+      "properties": {
+        "mean_velocity_mm_per_year": { "type": "number" },
+        "trend": { "type": "string", "enum": ["accelerating", "steady", "decelerating"] },
+        "line_of_sight_only": { "type": "boolean", "const": true }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "required": ["overall_score", "tier", "components"],
+      "additionalProperties": false,
+      "properties": {
+        "overall_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "tier": { "type": "string", "enum": ["High", "Moderate", "Low"] },
+        "components": {
+          "type": "object",
+          "required": ["data_quality", "temporal_persistence", "spatial_coherence", "cross_source_agreement", "model_validity"],
+          "additionalProperties": false,
+          "properties": {
+            "data_quality": { "type": "number", "minimum": 0, "maximum": 1 },
+            "temporal_persistence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "spatial_coherence": { "type": "number", "minimum": 0, "maximum": 1 },
+            "cross_source_agreement": { "type": "number", "enum": [0, 0.33, 0.67, 1.0] },
+            "model_validity": { "type": "number", "enum": [0.6, 1.0] }
+          }
+        }
+      }
+    },
+    "alternative_explanations_checked": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["explanation", "ruled_out", "basis"],
+        "additionalProperties": false,
+        "properties": {
+          "explanation": { "type": "string" },
+          "ruled_out": { "type": "boolean" },
+          "basis": { "type": "string" }
+        }
+      }
+    },
+    "supporting_evidence": {
+      "type": "object",
+      "required": ["recent_rainfall_mm", "slope_degrees", "known_seismic_history"],
+      "additionalProperties": false,
+      "properties": {
+        "recent_rainfall_mm": { "type": "number", "minimum": 0 },
+        "slope_degrees": { "type": "number", "minimum": 0, "maximum": 90 },
+        "known_seismic_history": { "type": "boolean" }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["matched_to_coolr_event", "coolr_event_id", "detection_lead_time_days", "validation_leg"],
+      "additionalProperties": false,
+      "properties": {
+        "matched_to_coolr_event": { "type": "boolean" },
+        "coolr_event_id": { "type": ["string", "null"] },
+        "detection_lead_time_days": { "type": "integer" },
+        "validation_leg": { "type": "string", "enum": ["sentinel1_historical", "nisar_live"] }
+      }
+    },
+    "data_provenance": {
+      "type": "object",
+      "required": ["product", "maturity", "crid_or_processor", "source_urls"],
+      "additionalProperties": false,
+      "properties": {
+        "product": { "type": "string", "enum": ["GUNW", "GOFF", "GCOV", "Sentinel-1 SBAS"] },
+        "maturity": { "type": "string", "enum": ["PROVISIONAL", "validation-leg"] },
+        "crid_or_processor": { "type": "string" },
+        "source_urls": { "type": "array", "items": { "type": "string", "format": "uri" } }
+      }
+    },
+    "recommended_next_step": { "type": "string", "minLength": 1 },
+    "not_an_emergency_alert_disclaimer": { "type": "boolean", "const": true }
+  }
+}
